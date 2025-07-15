@@ -4,7 +4,7 @@ from typing import Literal
 from pymediainfo import MediaInfo
 
 
-class MiMediainfo:
+class Tracks:
     def __init__(self, file:str):
         self.file = file
         self.logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class MiMediainfo:
             json.dump(dc, file, indent=4, ensure_ascii=False)
 
 
-class InfoVideo(MiMediainfo):
+class InfoVideo(Tracks):
     def __init__(self, file:str):
         super().__init__(file=file)
         self.data = self.get_info_track(track='video')
@@ -79,8 +79,8 @@ class InfoVideo(MiMediainfo):
     def aspect_ratio(self) -> str:
         return self.get('display_aspect_ratio')
     
-    @property
-    def time(self, ts:str) -> str:
+    # @property
+    def get_time(self, ts:str) -> str:
         text = ts.split('.')[0]
         while text.startswith('00:'):
             text = text[3:]
@@ -95,6 +95,39 @@ class InfoVideo(MiMediainfo):
             f'width: {self.width}\n'\
             f'duration (ms): {self.duration_ms}\n'\
             f'aspect ratio: {self.aspect_ratio}'
+    
+    def get_info(self) -> dict:
+        return {
+            'bitrate':self.bitrate,
+            'bitrateu':self.bitrate_u,
+            'codec':self.codec,
+            'format':self.format,
+            'duration':self.duration,
+            'durationms':self.duration_ms,
+            'time':self.get_time(self.duration),
+            'height':self.height,
+            'width':self.width,
+            'aspectratio':self.aspect_ratio
+        }
+    
+
+class MiMediainfo:
+    def __init__(self, filepath:str):
+        self.videopath = filepath
+        self.genProperties()
+
+    def genProperties(self):
+        self.video = InfoVideo(self.videopath)
+
+    def get_translate(self, template:str) -> str:
+        keywords = [p for p in template.split('$') if len(p)>3]
+        data = self.video.get_info()
+        for key in keywords:
+            word = f'${key}$'
+            if key in data.keys():
+                template = template.replace(word, str(data.get(key)))
+        return template
+
 
     
 if __name__=="__main__":
@@ -111,6 +144,12 @@ if __name__=="__main__":
     # # pprint(mime.get_info_track('general'))
     # mime.dict_to_json(dc=gen, name='salida-gen')
 
-    iv = InfoVideo(file=v1)
-    print(iv.get_info_text())
+    # iv = InfoVideo(file=v1)
+    # pprint(iv.get_info())
 
+
+    # test templates
+    # templa = "[$time$ $bitrateu$ $tags$]-$height$p"
+    # mi = MiMediainfo(v1)
+    # res = mi.get_translate(template=templa)
+    # print(res)
