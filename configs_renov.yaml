@@ -6,6 +6,6 @@
   - .gif
 
 "sep tags": ", "
-template: "[$time$ $bitrateu$ $tags$]-$height$p"
+template: "[$time$ $bitrateu$$tags$]-$height$p"
 width: 720
 height: 340

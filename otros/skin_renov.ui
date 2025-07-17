@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>300</height>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -226,6 +226,9 @@
         </property>
         <property name="frameShadow">
          <enum>QFrame::Shadow::Plain</enum>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
         </property>
         <attribute name="headerVisible">
          <bool>false</bool>

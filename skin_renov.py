@@ -15,16 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
-    QHeaderView, QLineEdit, QPushButton, QSizePolicy,
-    QSplitter, QTextEdit, QTreeWidget, QTreeWidgetItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QFrame,
+    QHBoxLayout, QHeaderView, QLineEdit, QPushButton,
+    QSizePolicy, QSplitter, QTextEdit, QTreeWidget,
+    QTreeWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_Renov(object):
     def setupUi(self, Renov):
         if not Renov.objectName():
             Renov.setObjectName(u"Renov")
-        Renov.resize(600, 300)
+        Renov.resize(600, 380)
         self.verticalLayout_3 = QVBoxLayout(Renov)
         self.verticalLayout_3.setSpacing(2)
         self.verticalLayout_3.setContentsMargins(4, 4, 4, 4)
@@ -129,6 +129,7 @@ class Ui_Renov(object):
         self.tree.setMinimumSize(QSize(0, 40))
         self.tree.setBaseSize(QSize(0, 1))
         self.tree.setFrameShadow(QFrame.Shadow.Plain)
+        self.tree.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.splitter.addWidget(self.tree)
         self.tree.header().setVisible(False)
         self.text_edit = QTextEdit(self.splitter)

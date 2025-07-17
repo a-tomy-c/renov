@@ -59,7 +59,14 @@ class Info:
     def get_data(self) -> dict:
         mediainfo = MiMediainfo(filepath=self.videopath)
         return mediainfo.get_translate(template=self.template)
+    
+    def properties(self):
+        mediainfo = MiMediainfo(filepath=self.videopath)
+        return mediainfo.video
 
+    def get_info_text(self):
+        info_video = self.properties()
+        return info_video.get_info_text()
 
 
     

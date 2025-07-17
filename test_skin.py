@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QApplication, QTreeWidgetItem
+from PySide6.QtWidgets import QWidget, QApplication, QTreeWidgetItem, QAbstractItemView
 from PySide6.QtGui import QIcon, QDragEnterEvent, QDropEvent
 from PySide6.QtCore import Qt, QSize
 from skin_renov import Ui_Renov
@@ -17,12 +17,16 @@ class Ventana(QWidget):
         self._config_Ventana()
 
     def _config_Ventana(self):
+        self.PATH_OLD = None
+        self.PATH_NEW = None
         self._config_tree()
         self.setAcceptDrops(True)
         self.fun = FuncionesRenov()
         self.reload_config()
         self.ui.cmb_tags.textActivated.connect(self.select_tag)
         self.ui.bt_reload_tags.clicked.connect(self.reload_tags)
+        self.ui.bt_preview.clicked.connect(self.preview_name)
+        self.ui.bt_info.clicked.connect(self.show_info)
 
     def reload_config(self):
         self.reload_tags()
@@ -47,6 +51,8 @@ class Ventana(QWidget):
         self.ui.text_edit.insertHtml(
             f'<span style=color:{fg};>{text}{br}</span>'
         )
+        scrollbar = self.ui.text_edit.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
 
     def dragEnterEvent(self, event:QDragEnterEvent):
         if event.mimeData().hasUrls():
@@ -86,6 +92,10 @@ class Ventana(QWidget):
 
         item_dir.addChild(item_file)
         item_dir.setExpanded(True)
+        self.ui.tree.setCurrentItem(item_file)
+        self.msg(f'{path.parent.as_posix()}\n', fg='gray')
+        self.msg('FILE: ')
+        self.msg(f'{name_file}\n', fg='white')
 
     def _config_tree(self):
         stylesheet = """
@@ -111,19 +121,60 @@ class Ventana(QWidget):
         """
         self.ui.tree.setStyleSheet(stylesheet)
         self.dirs = {}
-        self.ui.tree.itemClicked.connect(self.select_item_tree)
+        # self.ui.tree.itemClicked.connect(self.select_item_tree)
         self.ui.splitter.setSizes([1, 10])
         self.ui.splitter.setStretchFactor(0, 0)
         self.ui.splitter.setStretchFactor(1, 1)
         # self.ui.tree.setFixedHeight(45)
+        self.ui.text_edit.setReadOnly(True)
+        self.ui.le_tags.setDragEnabled(False)
+        self.ui.tree.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
 
     def select_item_tree(self, item:QTreeWidgetItem, ncol:int):
         data = item.data(0, Qt.UserRole)
         name = item.text(0)
+        # print(data)
+        # print(name)
 
-        print(data)
-        print(name)
+    def preview_name(self):
+        item = self.ui.tree.currentItem()
+        print(item)
+        if item:
+            filepath = item.data(0, Qt.UserRole)
+            file = Path(filepath)
+            if file.is_file():
+                stem = file.stem
+                template = self.ui.le_template.text()
+                iv = Info(filepath, template)
+                template_info = iv.get_data()
+                print(template_info)
 
+                tgs = self.ui.le_tags.text()
+                tags = f' {tgs}' if tgs else ''
+                template_info = template_info.replace('$tags$', tags)
+                print(template_info)
+
+                stem_new = f'{stem} {template_info}'
+                self.ui.le_newname.setText(stem_new)
+                path = file.with_stem(stem_new).as_posix()
+                print(path)
+
+    def show_info(self):
+        item = self.ui.tree.currentItem()
+        if item:
+            filepath = item.data(0, Qt.UserRole)
+            file = Path(filepath)
+            if file.is_file():
+                iv = Info(filepath, "")
+                res = iv.get_info_text()
+                for line in res.split('\n'):
+                    self.msg(f'{line}\n')
+
+        # scrollbar = text_edit.verticalScrollBar()
+        # scrollbar.setValue(scrollbar.maximum())
+
+        # scrollbar = self.ui.text_edit.verticalScrollBar()
+        # scrollbar.setValue(scrollbar.maximum())
 
 
 if __name__=="__main__":
