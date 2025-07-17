@@ -24,11 +24,11 @@ class MiCarpeta:
         return (f.as_posix() for f in self._content() if f.is_dir())
     
     def nombresDe(self, files:Iterator, stem:bool=True) -> Generator[str]:
-        if isinstance(files, Iterator):
-            return (f.stem if stem else f.name for f in files)
+        if isinstance(files, (Iterator, list, tuple)):
+            return [Path(f).stem if stem else Path(f).name for f in files]
         
     def porExtension(self, ext:Iterator=['.txt']) -> Generator[str]:
-        return (Path(f).as_posix() for f in self.archivos() if Path(f).suffix in ext)
+        return [Path(f).as_posix() for f in self.archivos() if Path(f).suffix in ext]
     
     def imagenes(self, ext=['.jpg', '.png', '.gif']) -> Generator[str]:
         return self.porExtension(ext=ext)
@@ -78,14 +78,19 @@ if __name__=="__main__":
     # pprint(res)
 
     # test read templates
-    system = platform.system()
-    if system == 'Windows':
-        v1 = ''
-    elif system == 'Linux':
-        v1 = '/run/media/tomy/sis/beta/renom/celmont.mp4'
+    # system = platform.system()
+    # if system == 'Windows':
+    #     v1 = ''
+    # elif system == 'Linux':
+    #     v1 = '/run/media/tomy/sis/beta/renom/celmont.mp4'
 
-    temp = "[$time$ $bitrateu$ $tags$]-$height$p"
-    info = Info(videopath=v1, template=temp)
-    res = info.get_data()
-    print(res)
+    # temp = "[$time$ $bitrateu$ $tags$]-$height$p"
+    # info = Info(videopath=v1, template=temp)
+    # res = info.get_data()
+    # print(res)
+
+
+    # test mi_carpeta
+    path = "/run/media/tomy/DD1/TAG/RECURSOS/personajes2/modelos"
+    mic = MiCarpeta(path=path)
         

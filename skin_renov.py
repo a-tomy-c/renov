@@ -17,37 +17,29 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QHeaderView, QLineEdit, QPushButton, QSizePolicy,
-    QSplitter, QTextEdit, QTreeView, QVBoxLayout,
-    QWidget)
+    QSplitter, QTextEdit, QTreeWidget, QTreeWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_Renov(object):
     def setupUi(self, Renov):
         if not Renov.objectName():
             Renov.setObjectName(u"Renov")
-        Renov.resize(600, 308)
-        self.verticalLayout_6 = QVBoxLayout(Renov)
-        self.verticalLayout_6.setSpacing(4)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.verticalLayout_6.setContentsMargins(2, 2, 2, 2)
-        self.splitter = QSplitter(Renov)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Orientation.Vertical)
-        self.frame = QFrame(self.splitter)
-        self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Shadow.Plain)
-        self.verticalLayout_3 = QVBoxLayout(self.frame)
-        self.verticalLayout_3.setSpacing(0)
+        Renov.resize(600, 300)
+        self.verticalLayout_3 = QVBoxLayout(Renov)
+        self.verticalLayout_3.setSpacing(2)
+        self.verticalLayout_3.setContentsMargins(4, 4, 4, 4)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setContentsMargins(2, 2, 2, 2)
         self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.frame_3 = QFrame(self.frame)
+        self.frame_3 = QFrame(Renov)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Shadow.Plain)
         self.horizontalLayout_3 = QHBoxLayout(self.frame_3)
         self.horizontalLayout_3.setSpacing(0)
+        self.horizontalLayout_3.setContentsMargins(4, 4, 4, 4)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout = QVBoxLayout()
@@ -60,12 +52,17 @@ class Ui_Renov(object):
         self.bt_info = QPushButton(self.frame_3)
         self.bt_info.setObjectName(u"bt_info")
         self.bt_info.setMaximumSize(QSize(50, 26))
+        font = QFont()
+        font.setFamilies([u"Noto Sans"])
+        font.setPointSize(8)
+        self.bt_info.setFont(font)
 
         self.horizontalLayout.addWidget(self.bt_info)
 
         self.bt_reload_template = QPushButton(self.frame_3)
         self.bt_reload_template.setObjectName(u"bt_reload_template")
         self.bt_reload_template.setMaximumSize(QSize(30, 26))
+        self.bt_reload_template.setFont(font)
 
         self.horizontalLayout.addWidget(self.bt_reload_template)
 
@@ -84,6 +81,7 @@ class Ui_Renov(object):
         self.le_tags = QLineEdit(self.frame_3)
         self.le_tags.setObjectName(u"le_tags")
         self.le_tags.setMaximumSize(QSize(16777215, 26))
+        self.le_tags.setClearButtonEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.le_tags)
 
@@ -91,13 +89,18 @@ class Ui_Renov(object):
         self.bt_reload_tags.setObjectName(u"bt_reload_tags")
         self.bt_reload_tags.setEnabled(True)
         self.bt_reload_tags.setMaximumSize(QSize(30, 26))
+        self.bt_reload_tags.setFont(font)
 
         self.horizontalLayout_2.addWidget(self.bt_reload_tags)
 
         self.cmb_tags = QComboBox(self.frame_3)
         self.cmb_tags.setObjectName(u"cmb_tags")
-        self.cmb_tags.setMinimumSize(QSize(140, 0))
+        self.cmb_tags.setMinimumSize(QSize(125, 0))
         self.cmb_tags.setMaximumSize(QSize(16777215, 26))
+        font1 = QFont()
+        font1.setFamilies([u"Noto Sans"])
+        font1.setPointSize(9)
+        self.cmb_tags.setFont(font1)
 
         self.horizontalLayout_2.addWidget(self.cmb_tags)
 
@@ -110,64 +113,72 @@ class Ui_Renov(object):
 
         self.verticalLayout_2.addWidget(self.frame_3)
 
-        self.treeView = QTreeView(self.frame)
-        self.treeView.setObjectName(u"treeView")
-        self.treeView.setBaseSize(QSize(0, 1))
-        self.treeView.setFrameShadow(QFrame.Shadow.Plain)
+        self.splitter = QSplitter(Renov)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
+        self.tree = QTreeWidget(self.splitter)
+        __qtreewidgetitem = QTreeWidgetItem()
+        __qtreewidgetitem.setText(0, u"1");
+        self.tree.setHeaderItem(__qtreewidgetitem)
+        self.tree.setObjectName(u"tree")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Ignored)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tree.sizePolicy().hasHeightForWidth())
+        self.tree.setSizePolicy(sizePolicy)
+        self.tree.setMinimumSize(QSize(0, 40))
+        self.tree.setBaseSize(QSize(0, 1))
+        self.tree.setFrameShadow(QFrame.Shadow.Plain)
+        self.splitter.addWidget(self.tree)
+        self.tree.header().setVisible(False)
+        self.text_edit = QTextEdit(self.splitter)
+        self.text_edit.setObjectName(u"text_edit")
+        self.text_edit.setFrameShadow(QFrame.Shadow.Plain)
+        self.splitter.addWidget(self.text_edit)
 
-        self.verticalLayout_2.addWidget(self.treeView)
+        self.verticalLayout_2.addWidget(self.splitter)
 
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_2)
-
-        self.splitter.addWidget(self.frame)
-        self.frame_4 = QFrame(self.splitter)
-        self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_4.setFrameShadow(QFrame.Shadow.Plain)
-        self.verticalLayout_5 = QVBoxLayout(self.frame_4)
-        self.verticalLayout_5.setSpacing(0)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_4 = QVBoxLayout()
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.textEdit = QTextEdit(self.frame_4)
-        self.textEdit.setObjectName(u"textEdit")
-        self.textEdit.setFrameShadow(QFrame.Shadow.Plain)
-
-        self.verticalLayout_4.addWidget(self.textEdit)
-
+        self.frame = QFrame(Renov)
+        self.frame.setObjectName(u"frame")
+        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Shadow.Plain)
+        self.horizontalLayout_5 = QHBoxLayout(self.frame)
+        self.horizontalLayout_5.setSpacing(0)
+        self.horizontalLayout_5.setContentsMargins(4, 4, 4, 4)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setSpacing(2)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_4.setContentsMargins(-1, 2, -1, -1)
-        self.bt_renamer = QPushButton(self.frame_4)
+        self.bt_renamer = QPushButton(self.frame)
         self.bt_renamer.setObjectName(u"bt_renamer")
         self.bt_renamer.setMaximumSize(QSize(16777215, 26))
+        self.bt_renamer.setFont(font)
 
         self.horizontalLayout_4.addWidget(self.bt_renamer)
 
-        self.le_newname = QLineEdit(self.frame_4)
+        self.le_newname = QLineEdit(self.frame)
         self.le_newname.setObjectName(u"le_newname")
         self.le_newname.setMaximumSize(QSize(16777215, 26))
 
         self.horizontalLayout_4.addWidget(self.le_newname)
 
-        self.bt_preview = QPushButton(self.frame_4)
+        self.bt_preview = QPushButton(self.frame)
         self.bt_preview.setObjectName(u"bt_preview")
         self.bt_preview.setMaximumSize(QSize(16777215, 26))
+        self.bt_preview.setFont(font)
 
         self.horizontalLayout_4.addWidget(self.bt_preview)
 
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_5.addLayout(self.horizontalLayout_4)
 
 
-        self.verticalLayout_5.addLayout(self.verticalLayout_4)
+        self.verticalLayout_2.addWidget(self.frame)
 
-        self.splitter.addWidget(self.frame_4)
 
-        self.verticalLayout_6.addWidget(self.splitter)
+        self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
 
         self.retranslateUi(Renov)
