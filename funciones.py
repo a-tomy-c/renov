@@ -13,7 +13,6 @@ class MiCarpeta:
         self.path = Path(path)
 
     def _content(self) -> list[Path]:
-        print('ruta: ', self.path.as_posix())
         with os.scandir(self.path.as_posix()) as fs:
             return [Path(r) for r in fs]
         

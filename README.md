@@ -2,6 +2,8 @@
 
 renombrar video, agregandole bitrate al nombre
 
+![](otros/cap_renov.jpg)
+
 
 ## Notas
 

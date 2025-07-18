@@ -1,7 +1,7 @@
+from pathlib import Path
 from funciones import MiCarpeta, FileConfig, Info
 import platform
-import logging
-
+# import logging
 
 
 class FuncionesRenov:
@@ -13,7 +13,7 @@ class FuncionesRenov:
     def get(self, key:str) -> str:
         return self.cf.get(key)
 
-    def get_tags(self) -> list[str]:
+    def get_tags_from_path(self) -> list[str]:
         system = platform.system()
         if system == "Windows":
             path = self.get('path tags win')
@@ -35,7 +35,20 @@ class FuncionesRenov:
         if not tag in self.tags:
             self.tags.append(tag)
         return sep.join(self.tags)
+    
+    def get_tags_txt(self) -> list[str]:
+        path = "tags.txt"
+        tags = None
+        if Path(path).is_file():
+            with open(path, 'r') as file:
+                lines = file.readlines()
+                tags = [line.strip('\n') for line in lines]
+        return tags
             
-
-
-
+    def get_tags(self) -> list[str]:
+        tags = []
+        try:
+            tags = self.get_tags_from_path()
+        except Exception as err:
+            tags = self.get_tags_txt()
+        return tags

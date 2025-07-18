@@ -1,1 +1,50 @@
 pyside6-uic otros/skin_renov.ui -o skin_renov.ui
+pyinstaller --onefile --windowed --name "genera-tags" --icon="icono.png" gen_tags.py
+chmod +x dist/MiPrograma
+chmod +x "genera tags"
+
+-- app image
+# Crear estructura básica
+python-appimage build app --name "GeneraTags" --entry-point genera_tags.py --icon icono.png --add-data "gen_tags.yaml:." --output-dir dist
+
+# Crear estructura básica
+python-appimage build app \
+    --name "GeneraTags" \
+    --entry-point genera_tags.py \
+    --icon icono.png \
+    --add-data "gen_tags.yaml:." \
+    --output-dir dist
+    
+pyinstaller --onefile --windowed --name "genera-tags-tk" --icon="icono.png" gen_tags_tk.py
+
+========= nuitka
+# para pyside6 (esto me funciono)
+nuitka --onefile \
+       --enable-plugin=pyside6 \
+       --linux-icon=icono.png \
+       --output-filename=genera-tags-nu \
+       gen_tags.py
+       
+# Para Tkinter (esto si me funciono)
+nuitka --onefile \
+       --enable-plugin=tk-inter \
+       --static-libpython=no \
+       --linux-icon=icono.png \
+       --output-filename=genera-tags-nutk \
+       gen_tags_tk.py
+
+       
+------------ para rename
+nuitka --onefile \
+       --enable-plugin=pyside6 \
+       --linux-icon=icono.png \
+       --output-filename=renov-nu \
+       main.py
+
+****
+nuitka --standalone \
+       --enable-plugin=pyside6 \
+       --include-package-data=pymediainfo \
+       --linux-icon=icono.png \
+       --output-filename=renov-nu \
+       main.py

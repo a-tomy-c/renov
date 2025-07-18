@@ -4,8 +4,9 @@ from PySide6.QtCore import Qt, QSize
 from skin_renov import Ui_Renov
 from funciones import MiCarpeta, FileConfig, Info
 from funciones_renov import FuncionesRenov
-import platform
-import logging
+# import platform
+# import logging
+import os
 from pathlib import Path
 
 
@@ -17,8 +18,6 @@ class Ventana(QWidget):
         self._config_Ventana()
 
     def _config_Ventana(self):
-        self.PATH_OLD = None
-        self.PATH_NEW = None
         self._config_tree()
         self.setAcceptDrops(True)
         self.fun = FuncionesRenov()
@@ -27,16 +26,24 @@ class Ventana(QWidget):
         self.ui.bt_reload_tags.clicked.connect(self.reload_tags)
         self.ui.bt_preview.clicked.connect(self.preview_name)
         self.ui.bt_info.clicked.connect(self.show_info)
+        self.ui.bt_reload_template.clicked.connect(self.reload_config)
+        self.ui.bt_renamer.clicked.connect(self.rename_file)
 
     def reload_config(self):
+        self.PATH_OLD = None
+        self.PATH_NEW = None
         self.reload_tags()
         self.reload_template()
+        self.ui.bt_renamer.setEnabled(False)
+
+        self.ui.text_edit.clear()
+        self.ui.tree.clear()
 
     def reload_tags(self):
         self.ui.cmb_tags.clear()
         tags = self.fun.get_tags()
         self.ui.cmb_tags.addItems(tags)
-        self.msg(text=f'{len(tags)} tags cargados.\n')
+        self.msg(text=f'{len(tags)} tags cargados.\n', fg='gray')
 
     def reload_template(self):
         self.ui.le_template.clear()
@@ -62,7 +69,6 @@ class Ventana(QWidget):
         urls = event.mimeData().urls()
         if urls:
             filepath = urls[0].toLocalFile()
-            print(filepath)
             self.setItemDrop(filepath)
         event.acceptProposedAction()
 
@@ -138,7 +144,6 @@ class Ventana(QWidget):
 
     def preview_name(self):
         item = self.ui.tree.currentItem()
-        print(item)
         if item:
             filepath = item.data(0, Qt.UserRole)
             file = Path(filepath)
@@ -147,34 +152,64 @@ class Ventana(QWidget):
                 template = self.ui.le_template.text()
                 iv = Info(filepath, template)
                 template_info = iv.get_data()
-                print(template_info)
 
                 tgs = self.ui.le_tags.text()
                 tags = f' {tgs}' if tgs else ''
                 template_info = template_info.replace('$tags$', tags)
-                print(template_info)
 
                 stem_new = f'{stem} {template_info}'
                 self.ui.le_newname.setText(stem_new)
                 path = file.with_stem(stem_new).as_posix()
-                print(path)
+                self.ui.bt_renamer.setEnabled(True)
+
+                self.PATH_OLD = filepath
+                self.PATH_NEW = path
+
+                self.show_info()
+                self.msg('\n')
+                self.msg(f'{self.PATH_OLD}\n', fg='gray')
+                self.msg(f'{self.PATH_NEW}\n', fg='white')
 
     def show_info(self):
+        try:
+            filepath = self._get_path_from_item()
+            if filepath:
+                iv = Info(filepath, "")
+                res = iv.get_info_text()
+                self.msg(f'\n')
+                for line in res.split('\n'):
+                    self.msg(f'{line}\n', fg='azure')
+        except Exception as e:
+            self.msg(f'{e}')
+
+    def _get_path_from_item(self) -> str|None:
+        path = None
         item = self.ui.tree.currentItem()
         if item:
             filepath = item.data(0, Qt.UserRole)
             file = Path(filepath)
             if file.is_file():
-                iv = Info(filepath, "")
-                res = iv.get_info_text()
-                for line in res.split('\n'):
-                    self.msg(f'{line}\n')
-
-        # scrollbar = text_edit.verticalScrollBar()
-        # scrollbar.setValue(scrollbar.maximum())
-
-        # scrollbar = self.ui.text_edit.verticalScrollBar()
-        # scrollbar.setValue(scrollbar.maximum())
+                path = filepath
+        return path
+    
+    def rename_file(self):
+        old = Path(self.PATH_OLD)
+        if old.is_file():
+            path_new = Path(self.PATH_NEW)
+            stem = path_new.stem
+            stem_mod = self.ui.le_newname.text()
+            if stem != stem_mod and stem_mod:
+                self.PATH_NEW = path_new.with_stem(stem_mod)
+                self.msg(f'el "stem" esta modificado\n', fg='orange')
+            if Path(self.PATH_NEW).is_file():
+                self.msg('el archivo ya existe.\n', fg='orange')
+            else:
+                os.rename(self.PATH_OLD, self.PATH_NEW)
+                self.msg(f'Archivo Renombrado exitosamente', fg='lightgreen')
+                self.ui.bt_renamer.setEnabled(False)
+        else:
+            self.msg('no es un archivo.\n')
+            self.msg(f'{self.PATH_OLD}')
 
 
 if __name__=="__main__":
